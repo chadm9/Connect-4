@@ -2,7 +2,7 @@
 
 $(document).ready(function () {
 
-    var whosTurn = 'player';
+    var playersTurn = true;
     var playerToken = 'red';
     var cpuToken = 'black';
 
@@ -22,16 +22,220 @@ $(document).ready(function () {
                     g0: [0,6], g1:[1,6], g2:[2,6], g3:[3,6], g4:[4,6], g5:[5,6]
     };
 
-    $('.slot').click(function () {
-        if(board[boardMap[this.id][0]][boardMap[this.id][1]]  === 'open'){
-            if(whosTurn === 'player'){
-                $(this).css('background', playerToken);
-                whosTurn = 'cpu';
+    function updateBoard(board, move){
+        if(playersTurn){
+            board[move[0]][move[1]] = playerToken;
+
+        }else{
+            board[move[0]][move[1]] = cpuToken;
+        }
+        if(move[0] !== 0){
+            board[move[0]-1][move[1]] = 'open';
+        }
+    }
+
+    function evaluateState(board){
+        var currentToken;
+        var previousToken;
+
+        //check rows for victory
+        for(var i = 0; i < 6; i++){
+            previousToken = board[i][0];
+            var tokensInARow = 1;
+            for(var j = 1; j < 7; j++){
+                currentToken = board[i][j];
+                if((currentToken === previousToken)){
+                    tokensInARow++;
+                    if(tokensInARow === 4){
+                        if(currentToken === playerToken){
+                            return -1000;
+                        }else if(currentToken === cpuToken){
+                            return 1000;
+                        }
+                    }
+                }else{
+                    previousToken = currentToken;
+                    tokensInARow = 1;
+                }
+            }
+        }
+        //check columns for victory
+        for(var i = 0; i < 7; i++){
+            previousToken = board[0][i];
+            tokensInARow = 1;
+            for(var j = 1; j < 6; j++){
+                currentToken = board[j][i];
+                if((currentToken === previousToken)){
+                    tokensInARow++;
+                    if(tokensInARow === 4){
+                        if(currentToken === playerToken){
+                            return -1000;
+                        }else if(currentToken === cpuToken){
+                            return 1000;
+                        }
+                    }
+                }else{
+                    previousToken = currentToken;
+                    tokensInARow = 1;
+                }
+            }
+        }
+
+        //check a3 diagonal for victory
+        tokensInARow = 1;
+        for(i = 1; i < 4; i++){
+            previousToken = board[3][0];
+            currentToken = board[3-i][i];
+            if(currentToken === previousToken){
+                tokensInARow++;
             }else{
-                $(this).css('background', cpuToken);
-                whosTurn = 'player';
+                break;
+            }
+            if(tokensInARow === 4){
+                if(currentToken === playerToken){
+                    return -1000;
+                }else if(currentToken === cpuToken){
+                    return 1000;
+                }
             }
 
+        }
+
+        //check d5 diagonal for victory
+        tokensInARow = 1;
+        for(i = 1; i < 4; i++){
+            previousToken = board[5][3];
+            currentToken = board[5-i][3+i];
+            if(currentToken === previousToken){
+                tokensInARow++;
+            }else{
+                break;
+            }
+            if(tokensInARow === 4){
+                if(currentToken === playerToken){
+                    return -1000;
+                }else if(currentToken === cpuToken){
+                    return 1000;
+                }
+            }
+
+        }
+
+        //check a4 diagonal for victory
+        tokensInARow = 1;
+        previousToken = board[4][0];
+        for(i = 1; i < 5; i++){
+
+            currentToken = board[4-i][i];
+            if(currentToken === previousToken){
+                tokensInARow++;
+            }else{
+                previousToken = currentToken;
+                tokensInARow =1;
+            }
+            if(tokensInARow === 4){
+                if(currentToken === playerToken){
+                    return -1000;
+                }else if(currentToken === cpuToken){
+                    return 1000;
+                }
+            }
+
+        }
+
+        //check c5 diagonal for victory
+        tokensInARow = 1;
+        previousToken = board[5][2];
+        for(i = 1; i < 5; i++){
+
+            currentToken = board[5-i][2+i];
+            if(currentToken === previousToken){
+                tokensInARow++;
+            }else{
+                previousToken = currentToken;
+                tokensInARow =1;
+            }
+            if(tokensInARow === 4){
+                if(currentToken === playerToken){
+                    return -1000;
+                }else if(currentToken === cpuToken){
+                    return 1000;
+                }
+            }
+
+        }
+
+        //check a5 diagonal for victory
+        tokensInARow = 1;
+        previousToken = board[5][0];
+        for(i = 1; i < 6; i++){
+
+            currentToken = board[5-i][i];
+            if(currentToken === previousToken){
+                tokensInARow++;
+            }else{
+                previousToken = currentToken;
+                tokensInARow =1;
+            }
+            if(tokensInARow === 4){
+                if(currentToken === playerToken){
+                    return -1000;
+                }else if(currentToken === cpuToken){
+                    return 1000;
+                }
+            }
+
+        }
+
+        //check b5 diagonal for victory
+        tokensInARow = 1;
+        previousToken = board[5][1];
+        for(i = 1; i < 6; i++){
+
+            currentToken = board[5-i][1+i];
+            if(currentToken === previousToken){
+                tokensInARow++;
+            }else{
+                previousToken = currentToken;
+                tokensInARow =1;
+            }
+            if(tokensInARow === 4){
+                if(currentToken === playerToken){
+                    return -1000;
+                }else if(currentToken === cpuToken){
+                    return 1000;
+                }
+            }
+
+        }
+
+
+        //the game is tied
+        return 0;
+    }
+
+    $('.slot').click(function () {
+        if(board[boardMap[this.id][0]][boardMap[this.id][1]]  === 'open'){
+            if(playersTurn){
+                $(this).css('background', playerToken);
+            }else{
+                $(this).css('background', cpuToken);
+            }
+            updateBoard(board, boardMap[this.id]);
+            $(this).css('border', 'none');
+            console.log(evaluateState(board));
+            playersTurn = !playersTurn;
+
+        }
+    });
+
+    $('.slot').hover(function () {
+        if(board[boardMap[this.id][0]][boardMap[this.id][1]]  === 'open') {
+            $(this).css('background', 'lightskyblue');
+        }
+    }, function () {
+        if(board[boardMap[this.id][0]][boardMap[this.id][1]]  === 'open') {
+            $(this).css('background', 'white');
         }
     })
 
