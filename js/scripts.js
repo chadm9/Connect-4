@@ -3,8 +3,13 @@
 $(document).ready(function () {
 
     var playersTurn = true;
+    var alpha = -10000;
+    var beta = 10000;
     var playerToken = 'red';
     var cpuToken = 'black';
+    var availableMoves = [[5,0], [5,1], [5,2], [5,3], [5,4], [5,5], [5,6]];
+    var depth = 7;
+    var maximizer = true;
 
     var board = [[null, null, null, null, null, null, null],
                  [null, null, null, null, null, null, null],
@@ -22,16 +27,71 @@ $(document).ready(function () {
                     g0: [0,6], g1:[1,6], g2:[2,6], g3:[3,6], g4:[4,6], g5:[5,6]
     };
 
-    function updateBoard(board, move){
+    function minimax(board, availableMoves, depth, alpha, beta, maximizer) {
+        var currentValue = evaluateState(board);
+        var bestValue;
+        if (currentValue === 1000 || currentValue === -1000) {
+            return currentValue;
+        }
+
+
+        if (!movesRemaining(board)) {
+            return 0;
+        }
+    }
+
+    function determineMove(board, availableMoves) {
+        var bestMove = [null, null];
+        var highestMoveValue = -10000;
+
+
+        for (var i = 0; i < availableMoves.length; i++) {
+
+            var boardCopy = copyBoard(board);
+            var availableMovesCopy = copyAvailableMoves(availableMoves);
+            updateBoard(boardCopy, availableMovesCopy[i], availableMovesCopy);
+            moveValue = minimax(boardCopy, availableMovesCopy, depth, alpha, beta, !maximizer);
+
+            if (highestMoveValue < moveValue) {
+                highestMoveValue = moveValue;
+                bestMove[0] = availableMoves[i][0];
+                bestMove[1] = availableMoves[i][1];
+                    }
+        }
+        return bestMove
+    }
+
+    function copyBoard(board){
+        var boardCopy = [];
+        for(var i = 0; i < 6; i++){
+            boardCopy.push(board[i].slice())
+        }
+        return boardCopy;
+    }
+    function copyAvailableMoves(availableMoves) {
+        var availableMovesCopy = [];
+        for(var i = 0; i < availableMoves.length; i++){
+            availableMovesCopy.push(availableMoves[i].slice())
+        }
+        return availableMovesCopy;
+    }
+
+    function updateBoard(board, move, availableMoves){
         if(playersTurn){
             board[move[0]][move[1]] = playerToken;
-
         }else{
             board[move[0]][move[1]] = cpuToken;
         }
+        for(var i = 0; i < availableMoves.length; i++){
+            if(move[0] === availableMoves[i][0]  && move[1] === availableMoves[i][1]){
+                availableMoves.splice(i,1);
+            }
+        }
         if(move[0] !== 0){
             board[move[0]-1][move[1]] = 'open';
+            availableMoves.push([move[0]-1, move[1]]);
         }
+        playersTurn = !playersTurn;
     }
 
     function evaluateState(board){
@@ -221,11 +281,10 @@ $(document).ready(function () {
             }else{
                 $(this).css('background', cpuToken);
             }
-            updateBoard(board, boardMap[this.id]);
+            updateBoard(board, boardMap[this.id], availableMoves);
             $(this).css('border', 'none');
             console.log(evaluateState(board));
-            playersTurn = !playersTurn;
-
+            console.log(availableMoves);
         }
     });
 

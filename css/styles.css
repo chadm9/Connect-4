@@ -1,9 +1,28 @@
-.space{
-    background-color: yellow;
+.col-sm-1.space{
+    background: repeating-radial-gradient(yellow, #ffcd10);
+    /*background: yellow;*/
+    height: 45px;
+    width: 45px;
+    padding: 0;
+
 }
 
 .slot{
     background: white;
     border-radius: 50%;
     color: purple;
+    border-left: 2px solid #c5c500;
+    border-right: 1px solid #cece00;
+    border-bottom: 3px solid #acac00;
+    border-top: 1px solid yellow;
+    margin: auto;
+    display: grid;
+    height: 38px;
+    width: 38px;
+    outline: none;
+
+}
+.board{
+    margin-top: 20px;
+
 }
