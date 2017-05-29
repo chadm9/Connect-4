@@ -1,7 +1,4 @@
-
-
 $(document).ready(function () {
-
 
     var playersTurn = true;
     var alpha = -10000;
@@ -9,7 +6,7 @@ $(document).ready(function () {
     var playerToken = 'red';
     var cpuToken = 'black';
     var availableMoves = [[5,0], [5,1], [5,2], [5,3], [5,4], [5,5], [5,6]];
-    var depth = 9;
+    var depth = 5;
     var maximizer = true;
 
     var board = [[null, null, null, null, null, null, null],
@@ -29,6 +26,8 @@ $(document).ready(function () {
     };
 
     function minimax(board, availableMoves, depth, alpha, beta, maximizer) {
+        //console.log(availableMoves.length);
+        //console.log(depth);
 
         var currentValue = evaluateState(board);
         var bestValue;
@@ -42,6 +41,7 @@ $(document).ready(function () {
         }
 
         if(depth === 0){
+            console.log('zero');
             return 0;
         }
 
@@ -51,12 +51,9 @@ $(document).ready(function () {
             for (var i = 0; i < availableMoves.length; i++) {
                 var boardCopy = copyBoard(board);
                 var availableMovesCopy = copyAvailableMoves(availableMoves);
-                updateBoard(boardCopy, availableMovesCopy[i], availableMovesCopy, false);
+                playersTurn = false;
+                updateBoard(boardCopy, availableMovesCopy[i], availableMovesCopy);
                 bestValue = Math.max(minimax(boardCopy, availableMovesCopy, depth - 1, alpha, beta, !maximizer), bestValue);
-                alpha = Math.max(bestValue, alpha);
-                if(beta <= alpha){
-                    break;
-                }
 
             }
             return bestValue;
@@ -66,12 +63,10 @@ $(document).ready(function () {
             for (var i = 0; i < availableMoves.length; i++) {
                 var boardCopy = copyBoard(board);
                 var availableMovesCopy = copyAvailableMoves(availableMoves);
-                updateBoard(boardCopy, availableMovesCopy[i], availableMovesCopy, true);
+                playersTurn = true;
+                updateBoard(boardCopy, availableMovesCopy[i], availableMovesCopy);
                 bestValue = Math.min(minimax(boardCopy, availableMovesCopy, depth - 1, alpha, beta, !maximizer), bestValue);
-                beta = Math.min(bestValue, beta);
-                if(beta <= alpha){
-                    break;
-                }
+
             }
             return bestValue;
         }
@@ -87,8 +82,8 @@ $(document).ready(function () {
             var availableMovesCopy = copyAvailableMoves(availableMoves);
 
             var boardCopy = copyBoard(board);
-            updateBoard(boardCopy, availableMovesCopy[i], availableMovesCopy, false);
-            moveValue = minimax(boardCopy, availableMovesCopy, depth - 1, -10000, 10000, !maximizer);
+            updateBoard(boardCopy, availableMovesCopy[i], availableMovesCopy);
+            moveValue = minimax(boardCopy, availableMovesCopy, depth - 1, alpha, beta, !maximizer);
 
             if (highestMoveValue < moveValue) {
                 highestMoveValue = moveValue;
@@ -96,6 +91,7 @@ $(document).ready(function () {
                 bestMove[1] = availableMoves[i][1];
                     }
         }
+        //playersTurn = true;
         return bestMove
     }
 
@@ -114,7 +110,7 @@ $(document).ready(function () {
         return availableMovesCopy;
     }
 
-    function updateBoard(board, move, availableMoves, playersTurn){
+    function updateBoard(board, move, availableMoves){
         if(playersTurn){
             board[move[0]][move[1]] = playerToken;
         }else{
@@ -129,6 +125,7 @@ $(document).ready(function () {
             board[move[0]-1][move[1]] = 'open';
             availableMoves.push([move[0]-1, move[1]]);
         }
+        //playersTurn = !playersTurn;
     }
 
     function evaluateState(board){
@@ -178,7 +175,7 @@ $(document).ready(function () {
             }
         }
 
-        //check a3 rightward diagonal for victory
+        //check a3 diagonal for victory
         tokensInARow = 1;
         for(i = 1; i < 4; i++){
             previousToken = board[3][0];
@@ -197,51 +194,12 @@ $(document).ready(function () {
             }
 
         }
-        //check g3 leftward diagonal for victory
-        tokensInARow = 1;
-        for(i = 1; i < 4; i++){
-            previousToken = board[3][6];
-            currentToken = board[3-i][6-i];
-            if(currentToken === previousToken){
-                tokensInARow++;
-            }else{
-                break;
-            }
-            if(tokensInARow === 4){
-                if(currentToken === playerToken){
-                    return -1000;
-                }else if(currentToken === cpuToken){
-                    return 1000;
-                }
-            }
 
-        }
-
-        //check d5 rightward diagonal for victory
+        //check d5 diagonal for victory
         tokensInARow = 1;
         for(i = 1; i < 4; i++){
             previousToken = board[5][3];
             currentToken = board[5-i][3+i];
-            if(currentToken === previousToken){
-                tokensInARow++;
-            }else{
-                break;
-            }
-            if(tokensInARow === 4){
-                if(currentToken === playerToken){
-                    return -1000;
-                }else if(currentToken === cpuToken){
-                    return 1000;
-                }
-            }
-
-        }
-
-        //check d5 leftward diagonal for victory
-        tokensInARow = 1;
-        for(i = 1; i < 4; i++){
-            previousToken = board[5][3];
-            currentToken = board[5-i][3-i];
             if(currentToken === previousToken){
                 tokensInARow++;
             }else{
@@ -279,30 +237,7 @@ $(document).ready(function () {
 
         }
 
-
-        //check g4 leftward diagonal for victory
-        tokensInARow = 1;
-        previousToken = board[4][6];
-        for(i = 1; i < 5; i++){
-
-            currentToken = board[4-i][6-i];
-            if(currentToken === previousToken){
-                tokensInARow++;
-            }else{
-                previousToken = currentToken;
-                tokensInARow =1;
-            }
-            if(tokensInARow === 4){
-                if(currentToken === playerToken){
-                    return -1000;
-                }else if(currentToken === cpuToken){
-                    return 1000;
-                }
-            }
-
-        }
-
-        //check c5 rightward diagonal for victory
+        //check c5 diagonal for victory
         tokensInARow = 1;
         previousToken = board[5][2];
         for(i = 1; i < 5; i++){
@@ -324,29 +259,7 @@ $(document).ready(function () {
 
         }
 
-        //check e5 leftward diagonal for victory
-        tokensInARow = 1;
-        previousToken = board[5][4];
-        for(i = 1; i < 5; i++){
-
-            currentToken = board[5-i][4-i];
-            if(currentToken === previousToken){
-                tokensInARow++;
-            }else{
-                previousToken = currentToken;
-                tokensInARow =1;
-            }
-            if(tokensInARow === 4){
-                if(currentToken === playerToken){
-                    return -1000;
-                }else if(currentToken === cpuToken){
-                    return 1000;
-                }
-            }
-
-        }
-
-        //check a5 rightward diagonal for victory
+        //check a5 diagonal for victory
         tokensInARow = 1;
         previousToken = board[5][0];
         for(i = 1; i < 6; i++){
@@ -368,56 +281,12 @@ $(document).ready(function () {
 
         }
 
-        //check g5 leftward diagonal for victory
-        tokensInARow = 1;
-        previousToken = board[5][6];
-        for(i = 1; i < 6; i++){
-
-            currentToken = board[5-i][6-i];
-            if(currentToken === previousToken){
-                tokensInARow++;
-            }else{
-                previousToken = currentToken;
-                tokensInARow =1;
-            }
-            if(tokensInARow === 4){
-                if(currentToken === playerToken){
-                    return -1000;
-                }else if(currentToken === cpuToken){
-                    return 1000;
-                }
-            }
-
-        }
-
-        //check b5 rightward diagonal for victory
+        //check b5 diagonal for victory
         tokensInARow = 1;
         previousToken = board[5][1];
         for(i = 1; i < 6; i++){
 
             currentToken = board[5-i][1+i];
-            if(currentToken === previousToken){
-                tokensInARow++;
-            }else{
-                previousToken = currentToken;
-                tokensInARow =1;
-            }
-            if(tokensInARow === 4){
-                if(currentToken === playerToken){
-                    return -1000;
-                }else if(currentToken === cpuToken){
-                    return 1000;
-                }
-            }
-
-        }
-
-        //check f5 leftward diagonal for victory
-        tokensInARow = 1;
-        previousToken = board[5][5];
-        for(i = 1; i < 6; i++){
-
-            currentToken = board[5-i][5-i];
             if(currentToken === previousToken){
                 tokensInARow++;
             }else{
@@ -452,20 +321,33 @@ $(document).ready(function () {
         if(board[boardMap[this.id][0]][boardMap[this.id][1]]  === 'open'){
             if(playersTurn){
                 $(this).css('background', playerToken);
-                updateBoard(board, boardMap[this.id], availableMoves, true);
+                updateBoard(board, boardMap[this.id], availableMoves);
                 $(this).css('border', 'none');
-                console.log(evaluateState(board));
-                playersTurn = false;
+                playersTurn = !playersTurn;
 
-
+                //cpuMove = boardMap.getKey([5,0]);
                 cpuMove = determineMove(board, availableMoves);
                 $('#' + boardMap.getKey(cpuMove)).css('background', cpuToken);
-                updateBoard(board, cpuMove, availableMoves, false);
+                updateBoard(board, cpuMove, availableMoves);
+                playersTurn = !playersTurn;
 
-                console.log(evaluateState(board));
-                playersTurn =true;
+
+
+                console.log(cpuMove);
+                console.log(playersTurn);
+                console.log(availableMoves);
+                console.log(board);
             }
+            // else{
+            //     $(this).css('background', cpuToken);
+            // }
+            // updateBoard(board, boardMap[this.id], availableMoves);
+            // $(this).css('border', 'none');
 
+
+
+            //console.log(evaluateState(board));
+            //console.log(availableMoves);
 
         }
     });
@@ -481,6 +363,3 @@ $(document).ready(function () {
     })
 
 });
-
-
-
