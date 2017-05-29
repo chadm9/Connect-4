@@ -8,7 +8,7 @@ $(document).ready(function () {
     var playerToken = 'red';
     var cpuToken = 'black';
     var availableMoves = [[5,0], [5,1], [5,2], [5,3], [5,4], [5,5], [5,6]];
-    var depth = 7;
+    var depth = 5;
     var maximizer = true;
 
     var board = [[null, null, null, null, null, null, null],
@@ -28,6 +28,9 @@ $(document).ready(function () {
     };
 
     function minimax(board, availableMoves, depth, alpha, beta, maximizer) {
+        //console.log(availableMoves.length);
+        //console.log(depth);
+
         var currentValue = evaluateState(board);
         var bestValue;
         if (currentValue === 1000 || currentValue === -1000) {
@@ -35,9 +38,41 @@ $(document).ready(function () {
         }
 
 
-        if (!movesRemaining(board)) {
+        if (availableMoves.length === 0) {
             return 0;
         }
+
+        if(depth === 0){
+            console.log('zero');
+            return 0;
+        }
+
+
+        if (maximizer) {
+            bestValue = -10000;
+            for (var i = 0; i < availableMoves.length; i++) {
+                var boardCopy = copyBoard(board);
+                var availableMovesCopy = copyAvailableMoves(availableMoves);
+                playersTurn = false;
+                updateBoard(boardCopy, availableMovesCopy[i], availableMovesCopy);
+                bestValue = Math.max(minimax(boardCopy, availableMovesCopy, depth - 1, alpha, beta, !maximizer), bestValue);
+
+            }
+            return bestValue;
+        }
+        else{
+            bestValue = 10000;
+            for (var i = 0; i < availableMoves.length; i++) {
+                var boardCopy = copyBoard(board);
+                var availableMovesCopy = copyAvailableMoves(availableMoves);
+                playersTurn = true;
+                updateBoard(boardCopy, availableMovesCopy[i], availableMovesCopy);
+                bestValue = Math.min(minimax(boardCopy, availableMovesCopy, depth - 1, alpha, beta, !maximizer), bestValue);
+
+            }
+            return bestValue;
+        }
+
     }
 
     function determineMove(board, availableMoves) {
@@ -46,11 +81,11 @@ $(document).ready(function () {
 
 
         for (var i = 0; i < availableMoves.length; i++) {
+            var availableMovesCopy = copyAvailableMoves(availableMoves);
 
             var boardCopy = copyBoard(board);
-            var availableMovesCopy = copyAvailableMoves(availableMoves);
             updateBoard(boardCopy, availableMovesCopy[i], availableMovesCopy);
-            moveValue = minimax(boardCopy, availableMovesCopy, depth, alpha, beta, !maximizer);
+            moveValue = minimax(boardCopy, availableMovesCopy, depth - 1, alpha, beta, !maximizer);
 
             if (highestMoveValue < moveValue) {
                 highestMoveValue = moveValue;
@@ -58,6 +93,7 @@ $(document).ready(function () {
                 bestMove[1] = availableMoves[i][1];
                     }
         }
+        //playersTurn = true;
         return bestMove
     }
 
@@ -91,7 +127,7 @@ $(document).ready(function () {
             board[move[0]-1][move[1]] = 'open';
             availableMoves.push([move[0]-1, move[1]]);
         }
-        playersTurn = !playersTurn;
+        //playersTurn = !playersTurn;
     }
 
     function evaluateState(board){
@@ -274,17 +310,47 @@ $(document).ready(function () {
         return 0;
     }
 
+    Object.prototype.getKey = function(value) {
+        var object = this;
+        for(var key in object){
+            if(object[key][0]==value[0]  && object[key][1]==value[1]){
+                return key;
+            }
+        }
+    };
+
     $('.slot').click(function () {
         if(board[boardMap[this.id][0]][boardMap[this.id][1]]  === 'open'){
             if(playersTurn){
                 $(this).css('background', playerToken);
-            }else{
-                $(this).css('background', cpuToken);
+                updateBoard(board, boardMap[this.id], availableMoves);
+                $(this).css('border', 'none');
+                playersTurn = !playersTurn;
+
+                //cpuMove = boardMap.getKey([5,0]);
+                cpuMove = determineMove(board, availableMoves);
+                $('#' + boardMap.getKey(cpuMove)).css('background', cpuToken);
+                updateBoard(board, cpuMove, availableMoves);
+                playersTurn = !playersTurn;
+
+
+
+                console.log(cpuMove);
+                console.log(playersTurn);
+                console.log(availableMoves);
+                console.log(board);
             }
-            updateBoard(board, boardMap[this.id], availableMoves);
-            $(this).css('border', 'none');
-            console.log(evaluateState(board));
-            console.log(availableMoves);
+            // else{
+            //     $(this).css('background', cpuToken);
+            // }
+            // updateBoard(board, boardMap[this.id], availableMoves);
+            // $(this).css('border', 'none');
+
+
+
+            //console.log(evaluateState(board));
+            //console.log(availableMoves);
+
         }
     });
 
