@@ -487,7 +487,11 @@ $(document).ready(function () {
                 $(this).css('background', playerToken);
                 updateBoard(board, boardMap[this.id], availableMoves, true);
                 $(this).css('border', 'none');
-                console.log(evaluateState(board));
+
+                if(evaluateState(board) === -1000){
+                    $('#title').html('You Win!')
+                }
+
                 playersTurn = false;
 
 
@@ -495,7 +499,9 @@ $(document).ready(function () {
                 $('#' + boardMap.getKey(cpuMove)).css('background', cpuToken);
                 updateBoard(board, cpuMove, availableMoves, false);
 
-                console.log(evaluateState(board));
+                if(evaluateState(board) === 1000){
+                    $('#title').html('You Lose...')
+                }
                 playersTurn =true;
             }
 
