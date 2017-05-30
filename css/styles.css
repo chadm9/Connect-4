@@ -26,3 +26,10 @@
     margin-top: 20px;
 
 }
+
+body{
+    background-image: url("./../cartoon-landscape1.svg");
+    background-repeat: no-repeat;
+    background-size: 100%;
+
+}

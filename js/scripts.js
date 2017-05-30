@@ -9,7 +9,7 @@ $(document).ready(function () {
     var playerToken = 'red';
     var cpuToken = 'black';
     var availableMoves = [[5,0], [5,1], [5,2], [5,3], [5,4], [5,5], [5,6]];
-    var depth = 9;
+    var depth = 7;
     var maximizer = true;
 
     var board = [[null, null, null, null, null, null, null],
@@ -19,6 +19,13 @@ $(document).ready(function () {
                  [null, null, null, null, null, null, null],
                  ['open', 'open', 'open', 'open', 'open', 'open', 'open']];
 
+    var goard = [[null, null, null, null, 'red', 'red', 'red'],
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+        ['black', null, null, null, null, null, null],
+        ['black', null, null, null, null, null, null],
+        ['black', 'black', 'black', 'open', 'open', 'red', 'red']];
+
     var boardMap = {a0: [0,0], a1:[1,0], a2:[2,0], a3:[3,0], a4:[4,0], a5:[5,0],
                     b0: [0,1], b1:[1,1], b2:[2,1], b3:[3,1], b4:[4,1], b5:[5,1],
                     c0: [0,2], c1:[1,2], c2:[2,2], c3:[3,2], c4:[4,2], c5:[5,2],
@@ -27,6 +34,30 @@ $(document).ready(function () {
                     f0: [0,5], f1:[1,5], f2:[2,5], f3:[3,5], f4:[4,5], f5:[5,5],
                     g0: [0,6], g1:[1,6], g2:[2,6], g3:[3,6], g4:[4,6], g5:[5,6]
     };
+
+    function heuristic(board) {
+        boardCopy = copyBoard(board);
+        playerThreats = 0;
+        cpuThreats = 0;
+        for(var i = 0; i < 6; i++){
+            for(var j = 0; j < 7; j++){
+                if(boardCopy[i][j] === null || boardCopy[i][j] === 'open'){
+                    boardCopy[i][j] = playerToken;
+                    if(evaluateState(boardCopy) === -1000){
+                        playerThreats++;
+                    }
+                    boardCopy[i][j] = null;
+                    boardCopy[i][j] = cpuToken;
+                    if(evaluateState(boardCopy) === 1000){
+                        cpuThreats++;
+                    }
+                    boardCopy[i][j] = null
+
+                }
+            }
+        }
+        return 100*cpuThreats - 100*playerThreats
+    }
 
     function minimax(board, availableMoves, depth, alpha, beta, maximizer) {
 
@@ -42,7 +73,7 @@ $(document).ready(function () {
         }
 
         if(depth === 0){
-            return 0;
+            return heuristic(board);
         }
 
 
@@ -448,6 +479,8 @@ $(document).ready(function () {
         }
     };
 
+    //console.log(heuristic(goard));
+
     $('.slot').click(function () {
         if(board[boardMap[this.id][0]][boardMap[this.id][1]]  === 'open'){
             if(playersTurn){
@@ -479,7 +512,6 @@ $(document).ready(function () {
             $(this).css('background', 'white');
         }
     })
-
 });
 
 
