@@ -2,7 +2,7 @@
 
 $(document).ready(function () {
 
-
+    var gameNotOver = true;
     var playersTurn = true;
     var alpha = -10000;
     var beta = 10000;
@@ -18,6 +18,9 @@ $(document).ready(function () {
                  [null, null, null, null, null, null, null],
                  [null, null, null, null, null, null, null],
                  ['open', 'open', 'open', 'open', 'open', 'open', 'open']];
+
+    var newBoard = copyBoard(board);
+    var initialAvailableMoves = copyAvailableMoves(availableMoves);
 
     var goard = [[null, null, null, null, 'red', 'red', 'red'],
         [null, null, null, null, null, null, null],
@@ -479,45 +482,132 @@ $(document).ready(function () {
         }
     };
 
+    function checkResult(board, availableMoves) {
+        if(evaluateState(board) === -1000){
+            $('#title').html('You Win!');
+            gameNotOver = false;
+        }else if(evaluateState(board) === 1000){
+            $('#title').html('You Lose...');
+            gameNotOver = false;
+        }else if(availableMoves.length === 0){
+            $('#title').html('Draw.');
+            gameNotOver = false;
+        }
+        if(!gameNotOver){
+            $('#restart').css('visibility', 'visible');
+        }
+    }
+
     //console.log(heuristic(goard));
+
+    function animateSlots() {
+        var columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
+        notFinished = true;
+        var i = 0;
+        var j = 0;
+        var k  = 1;
+        currentColumn = columns[i];
+        currentRow = 0;
+
+
+
+        var animate = setInterval(function () {
+            currentColumn = columns[i];
+            $('#' + currentColumn + currentRow).css('visibility', 'visible');
+            $('#' + currentColumn + currentRow).css('animation', 'bubbles 0.15s 1');
+
+            i++;
+
+            if(i%7===0) {
+
+                currentRow += 1;
+                i=0;
+                currentColumn = currentColumn[i];
+            }
+            if(currentRow >= 6){
+                clearInterval(animate);
+            }
+
+        }, 55);
+    }
+
+    animateSlots();
 
     $('.slot').click(function () {
         if(board[boardMap[this.id][0]][boardMap[this.id][1]]  === 'open'){
-            if(playersTurn){
-                $(this).css('background', playerToken);
-                updateBoard(board, boardMap[this.id], availableMoves, true);
-                $(this).css('border', 'none');
+            if(playersTurn && gameNotOver){
+                //$(this).css('background', playerToken);
+                $(this).css('display', 'none');
+                $('#' + this.id + '-container').append('<img class="faces" src="images/purple-face.png">');
 
-                if(evaluateState(board) === -1000){
-                    $('#title').html('You Win!')
-                }
+                updateBoard(board, boardMap[this.id], availableMoves, true);
+
+                // $(this).css('border', 'none');
+                checkResult(board, availableMoves);
+                // if(evaluateState(board) === -1000){
+                //     $('#title').html('You Win!')
+                // }
 
                 playersTurn = false;
 
 
-                cpuMove = determineMove(board, availableMoves);
-                $('#' + boardMap.getKey(cpuMove)).css('background', cpuToken);
-                updateBoard(board, cpuMove, availableMoves, false);
+                setTimeout(function () {
+                    if(gameNotOver){
+                        cpuMove = determineMove(board, availableMoves);
+                        //$('#' + boardMap.getKey(cpuMove)).css('background', cpuToken);
+                        $('#' + boardMap.getKey(cpuMove)).css('display', 'none');
+                        $('#' + boardMap.getKey(cpuMove) + '-container').append('<img class="faces" src="images/red-face.png">');
 
-                if(evaluateState(board) === 1000){
-                    $('#title').html('You Lose...')
-                }
-                playersTurn =true;
+
+                        updateBoard(board, cpuMove, availableMoves, false);
+                        checkResult(board, availableMoves);
+                        // if(evaluateState(board) === 1000){
+                        //     $('#title').html('You Lose...')
+                        // }
+                        playersTurn = true;
+                    }
+                },25);
+
+
+
             }
 
 
         }
     });
 
+
+
+
     $('.slot').hover(function () {
-        if(board[boardMap[this.id][0]][boardMap[this.id][1]]  === 'open') {
-            $(this).css('background', 'lightskyblue');
+        if(board[boardMap[this.id][0]][boardMap[this.id][1]]  === 'open' && gameNotOver) {
+            $(this).css('background', 'rgba(135,206,250,0.5)');
         }
     }, function () {
         if(board[boardMap[this.id][0]][boardMap[this.id][1]]  === 'open') {
-            $(this).css('background', 'white');
+            $(this).css('background', 'rgba(75,0,130,0.5)');
+        }
+    });
+
+    $('#restart').click(function () {
+        if(!gameNotOver){
+            board = copyBoard(newBoard);
+            availableMoves = copyAvailableMoves(initialAvailableMoves);
+            $('.faces').remove();
+            $('.slot').each(function () {
+                $(this).css('background', 'rgba(75,0,130,0.5)');
+                $(this).css('display', 'grid');
+
+            });
+            gameNotOver = true;
+            playersTurn = true;
+            $('#title').html('Connect-4');
+            $('#restart').css('visibility', 'hidden');
+
+
         }
     })
+
 });
 
 
