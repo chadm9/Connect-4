@@ -90,7 +90,35 @@ body{
     width: 95%;
 }
 
-#a0{
+#connect{
+    animation: connect 2s 1;
+    position: relative;
+    animation-timing-function: ease-out;
+
+}
+
+@keyframes connect{
+    0%   {left: -900px;}
+    /*25%  {font-size: 5px;}*/
+    30%  {left: 0;}
+    60% {left: 0;}
+    80% {left: 0px;}
+    100% {left: 0;}
+}
+
+#four{
+    position: relative;
+    animation: four 2s 1;
+    animation-timing-function: ease-out;
+
+}
+
+@keyframes four{
+    0%   {right: -700px;}
+    30%  {right: -700px;}
+    60%  {right: 0;}
+    80%  {right: 0px;}
+    100% {right: 0px;}
 }
 
 
