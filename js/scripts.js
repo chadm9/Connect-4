@@ -2,7 +2,7 @@
 
 $(document).ready(function () {
 
-    var gameNotOver = true;
+    var gameNotOver = false;
     var playersTurn = true;
     var alpha = -10000;
     var beta = 10000;
