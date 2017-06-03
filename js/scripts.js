@@ -538,7 +538,8 @@ $(document).ready(function () {
             if(playersTurn && gameNotOver){
                 //$(this).css('background', playerToken);
                 $(this).css('display', 'none');
-                $('#' + this.id + '-container').append('<img class="faces" src="images/purple-face.png">');
+
+                $('#' + this.id + '-container').append('<img class="faces" src="images/purple2.png">');
 
                 updateBoard(board, boardMap[this.id], availableMoves, true);
 
@@ -556,7 +557,7 @@ $(document).ready(function () {
                         cpuMove = determineMove(board, availableMoves);
                         //$('#' + boardMap.getKey(cpuMove)).css('background', cpuToken);
                         $('#' + boardMap.getKey(cpuMove)).css('display', 'none');
-                        $('#' + boardMap.getKey(cpuMove) + '-container').append('<img class="faces" src="images/red-face.png">');
+                        $('#' + boardMap.getKey(cpuMove) + '-container').append('<img class="faces" src="images/red2.png">');
 
 
                         updateBoard(board, cpuMove, availableMoves, false);
@@ -566,7 +567,7 @@ $(document).ready(function () {
                         // }
                         playersTurn = true;
                     }
-                },25);
+                },450);
 
 
 
@@ -591,6 +592,7 @@ $(document).ready(function () {
 
     $('#restart').click(function () {
         if(!gameNotOver){
+            $('#restart').css('visibility', 'hidden');
             board = copyBoard(newBoard);
             availableMoves = copyAvailableMoves(initialAvailableMoves);
             $('.faces').remove();
@@ -602,7 +604,7 @@ $(document).ready(function () {
             gameNotOver = true;
             playersTurn = true;
             $('#title').html('Connect-4');
-            $('#restart').css('visibility', 'hidden');
+
 
 
         }

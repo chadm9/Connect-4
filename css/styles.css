@@ -64,6 +64,8 @@ body{
     100% {height: 38px; width: 38px; padding-top: 0;}
 }
 
+
+
 #restart{
     background: yellow;
     font-family: 'Titan One', cursive;
@@ -76,7 +78,7 @@ body{
     border: solid 2px rgba(128,128,128,0.4);
     border-radius: 6px;
     visibility: visible;
-    animation: newgame 2.5s 1 ease-in;
+    animation: newgame 2.5s 1 cubic-bezier(.76,.01,.94,.74);
     /*animation-delay: 1.5s;*/
     width:138px;
     height: 44px;
@@ -85,12 +87,25 @@ body{
     /*box-shadow: -3px 3px 2px white;*/
 }
 
+#new-game{
+    animation: newtext 1s infinite linear;
+    animation-delay: 1s;
+
+}
+
+@keyframes newtext{
+    0%   {font-size: 93%;}
+
+    50%   {font-size: 100%;}
+    100% {font-size: 93%;}
+}
+
 
 @keyframes newgame{
     0%   {width: 0; height: 0; font-size: 0; padding: 0; border: 0;}
 
     65%   {width: 0; height: 0;font-size: 0; padding: 0; border: 0;}
-    98% {width: 152px; height: 48px;font-size: 156%; padding: 7px 13px; border: solid 2px rgba(128,128,128,0.4);}
+    97% {width: 152px; height: 48px;font-size: 156%; padding: 7px 13px; border: solid 2px rgba(128,128,128,0.4);}
     100% {width: 138px; height: 44px;font-size: 142%; padding: 6px 12px; border: solid 2px rgba(128,128,128,0.4);}
 }
 
@@ -105,7 +120,17 @@ body{
 .faces{
     height: 95%;
     width: 95%;
+    animation: slot-select 0.4s linear;
+
 }
+
+@keyframes slot-select{
+    0%   {width: 0; height: 0; padding: 100%;}
+
+    100% {width: 100%; height: 100%; padding: 0}
+}
+
+
 
 #connect{
     animation: connect 2s 1;
