@@ -484,16 +484,22 @@ $(document).ready(function () {
 
     function checkResult(board, availableMoves) {
         if(evaluateState(board) === -1000){
-            $('#title').html('You Win!');
+
+            $('#message').html('You Win!');
+
             gameNotOver = false;
         }else if(evaluateState(board) === 1000){
-            $('#title').html('You Lose...');
+
+            setTimeout($('#message').html('You Lose...'), 500);
             gameNotOver = false;
+
         }else if(availableMoves.length === 0){
-            $('#title').html('Draw.');
+            $('#message').html('Draw.');
             gameNotOver = false;
         }
         if(!gameNotOver){
+            $('#arrow').css('visibility', 'hidden');
+
             $('#restart').css('visibility', 'visible');
             $('#restart').css('animation', 'newgame 2.5s 1 cubic-bezier(.76,.01,.94,.74)');
         }
@@ -609,7 +615,9 @@ $(document).ready(function () {
             });
             gameNotOver = true;
             playersTurn = true;
-            $('#title').html('Connect-4');
+            $('#message').html('Turn:');
+            $('#arrow').css('visibility', 'visible');
+
             $('#arrow').css('bottom', '0');
 
             $('.turn').css('animation', 'turns 0.3s 1 ease-in');
