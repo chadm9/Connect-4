@@ -486,11 +486,15 @@ $(document).ready(function () {
         if(evaluateState(board) === -1000){
 
             $('#message').html('You Win!');
+            $('#player').css('color', 'lime');
+            $('#cpu').css('color', 'red');
 
             gameNotOver = false;
         }else if(evaluateState(board) === 1000){
 
             setTimeout($('#message').html('You Lose...'), 500);
+            $('#player').css('color', 'red');
+            $('#cpu').css('color', 'lime');
             gameNotOver = false;
 
         }else if(availableMoves.length === 0){
@@ -622,6 +626,8 @@ $(document).ready(function () {
 
             $('.turn').css('animation', 'turns 0.3s 1 ease-in');
             $('.turn').css('visibility', 'visible');
+            $('#player').css('color', 'yellow');
+            $('#cpu').css('color', 'yellow');
 
 
 
