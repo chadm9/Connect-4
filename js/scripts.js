@@ -502,7 +502,7 @@ $(document).ready(function () {
             gameNotOver = false;
         }
         if(!gameNotOver){
-            $('#arrow').css('visibility', 'hidden');
+            //$('#arrow').css('visibility', 'hidden');
 
             $('#restart').css('visibility', 'visible');
             $('#restart').css('animation', 'newgame 2.5s 1 cubic-bezier(.76,.01,.94,.74)');
@@ -544,24 +544,26 @@ $(document).ready(function () {
 
     animateSlots();
 
+
     $('.slot').click(function () {
         if(board[boardMap[this.id][0]][boardMap[this.id][1]]  === 'open'){
             if(playersTurn && gameNotOver){
+
                 //$(this).css('background', playerToken);
                 updateBoard(board, boardMap[this.id], availableMoves, true);
                 playersTurn = false;
 
                 $(this).css('display', 'none');
-                $('#arrow').css('bottom', '-34px');
+                $('#player').css('color', 'yellow');
+                $('#cpu').css('color', 'purple');
+                //$('#arrow').css('bottom', '-34px');
 
                 $('#' + this.id + '-container').append('<img class="faces" src="images/purple2.png">');
 
 
                 // $(this).css('border', 'none');
                 checkResult(board, availableMoves);
-                // if(evaluateState(board) === -1000){
-                //     $('#title').html('You Win!')
-                // }
+
 
 
 
@@ -571,14 +573,17 @@ $(document).ready(function () {
                         //$('#' + boardMap.getKey(cpuMove)).css('background', cpuToken);
                         $('#' + boardMap.getKey(cpuMove)).css('display', 'none');
                         $('#' + boardMap.getKey(cpuMove) + '-container').append('<img class="faces" src="images/red2.png">');
-                        $('#arrow').css('bottom', '0');
+                        //$('#arrow').css('bottom', '0');
 
                         updateBoard(board, cpuMove, availableMoves, false);
+                        $('#cpu').css('color', 'yellow');
+                        $('#player').css('color', 'purple');
                         checkResult(board, availableMoves);
                         // if(evaluateState(board) === 1000){
                         //     $('#title').html('You Lose...')
                         // }
                         playersTurn = true;
+
                     }
                 },450);
 
@@ -620,13 +625,13 @@ $(document).ready(function () {
             gameNotOver = true;
             playersTurn = true;
             $('#message').html('Turn:');
-            $('#arrow').css('visibility', 'visible');
+            //$('#arrow').css('visibility', 'visible');
 
-            $('#arrow').css('bottom', '0');
+            //$('#arrow').css('bottom', '0');
 
             $('.turn').css('animation', 'turns 0.3s 1 ease-in');
             $('.turn').css('visibility', 'visible');
-            $('#player').css('color', 'yellow');
+            $('#player').css('color', 'purple');
             $('#cpu').css('color', 'yellow');
 
 
