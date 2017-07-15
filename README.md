@@ -4,9 +4,10 @@
 ## Description
 This code is a single page desktop and mobile friendly app for playing Connect-4,
 a popular two player game where each player tries to connect four tokens
-in a row (horizontally, vertically, or diagonally).  Connect-4 is a game of so-called "perfect information" so the game engine is implemented via application
-of the Minimax Algorithm.  Further description of the app can be found on my personal
+in a row (horizontally, vertically, or diagonally).  As Connect-4 is a game of so-called "perfect information," the game engine is implemented via application
+of the Minimax Algorithm.  A brief description of the app can be found on my personal
 website in the link below.
+<br>
 <br>
 <img src='images/connect-4-pic.png'>
 
@@ -49,7 +50,7 @@ The following code snippet demonstrates the game's implementation of the Minimax
             return currentValue;
         }
 
-        //If no moves remain, and no one has won, the game is tied.
+        //If no moves remain, and no one has won, the game a tie.
         if (availableMoves.length === 0) {
             return 0;
         }
@@ -60,7 +61,7 @@ The following code snippet demonstrates the game's implementation of the Minimax
         }
 
         //Find the best move available from the perspective of the cpu.  This
-        //This corresponds to locating the game state with the highest score.
+        //corresponds to locating the game state with the highest score.
         if (maximizer) {
             bestValue = -10000;
             for (var i = 0; i < availableMoves.length; i++) {
@@ -78,7 +79,7 @@ The following code snippet demonstrates the game's implementation of the Minimax
         }
         
         //Find the best move available from the perspective of the player.  This
-        //This corresponds to locating the game state with the lowest score.
+        //corresponds to locating the game state with the lowest score.
         else{
             bestValue = 10000;
             for (var i = 0; i < availableMoves.length; i++) {
@@ -96,4 +97,4 @@ The following code snippet demonstrates the game's implementation of the Minimax
 
     }
   ```
-# Connect-4
+
